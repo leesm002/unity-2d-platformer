@@ -23,26 +23,23 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        Move();
+        moveInput = Input.GetAxisRaw("Horizontal"); // 입력만 받기
         Jump();
     }
 
     void FixedUpdate()
     {
         Move();
+        CheckGround();
     }
 
     void Move()
     {
-        float move = Input.GetAxisRaw("Horizontal");
-
-        rb.linearVelocity = new Vector2(move * moveSpeed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
     }
 
     void Jump()
     {
-        CheckGround();
-
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -51,27 +48,12 @@ public class PlayerController : MonoBehaviour
 
     void CheckGround()
     {
+        if (groundCheck == null) return;
         isGrounded = Physics2D.OverlapCircle(
-            groundCheck.position,
-            groundCheckRadius,
-            groundLayer
-        );
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = true;
-        }
-    }
-
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
+        groundCheck.position,
+        groundCheckRadius,
+        groundLayer
+    );
     }
     void OnDrawGizmosSelected()
     {
